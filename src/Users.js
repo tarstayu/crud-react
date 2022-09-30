@@ -12,9 +12,35 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Avatar from '@mui/material/Avatar';
-
+import Link from '@mui/material/Link';
+import ButtonGroup from '@mui/material/ButtonGroup';
 
 export default function Users() {
+
+    const UserUpdate = id => {
+        window.location = '/update/'+id
+    }
+
+    const UserDelete = id => {
+        var myHeaders = new Headers();
+        myHeaders.append("Content-Type", "application/json");
+
+        var raw = JSON.stringify({
+            "id": id
+        });
+
+        var requestOptions = {
+            method: 'DELETE',
+            headers: myHeaders,
+            body: raw,
+            redirect: 'follow'
+        };
+
+        fetch("https://www.melivecode.com/api/users/delete", requestOptions)
+            .then(response => response.json())
+            .then(result => alert(result['message']))
+            .catch(error => console.log('error', error));
+    }
 
     const [items, setItems] = useState([]);
     useEffect(() => {
@@ -39,7 +65,9 @@ export default function Users() {
                             </Typography>
                         </Box>
                         <Box>
-                            <Button variant="contained">Create</Button>
+                            <Link href="create">
+                                <Button variant="contained">Create</Button>
+                            </Link>
                         </Box>
                     </Box>
                     <TableContainer component={Paper}>
@@ -64,14 +92,19 @@ export default function Users() {
                                             {row.id}
                                         </TableCell>
                                         <TableCell align="center">
-                                            <Box display = "flex" justifyContent="center">
+                                            <Box display="flex" justifyContent="center">
                                                 <Avatar alt={row.username} src={row.avatar} />
                                             </Box>
                                         </TableCell>
                                         <TableCell align="right">{row.fname}</TableCell>
                                         <TableCell align="right">{row.lname}</TableCell>
                                         <TableCell align="right">{row.username}</TableCell>
-                                        <TableCell align="right"></TableCell>
+                                        <TableCell align="right">
+                                            <ButtonGroup variant="outlined" aria-label="outlined button group">
+                                                <Button onClick={() => UserUpdate(row.id)}>Edit</Button>
+                                                <Button onClick={() => UserDelete(row.id)}>Delete</Button>
+                                            </ButtonGroup>
+                                        </TableCell>
                                     </TableRow>
                                 ))}
                             </TableBody>
